@@ -24,7 +24,15 @@ class Server {
         console.log('server start on =>', Server_port)
         this.http2_server = http2.createSecureServer({ key: this.private_key, cert: this.public_key })
         this.http2_server.on('error',  (err) => { console.log('server start err =>', err) })
-        this.http2_server.on('stream', (stream, headers) => {
+        // this.http2_server.setTimeout(4400)
+        // this.http2_server.on('timeout', (err) => { console.log('server on timeout =>', err) })
+        this.http2_server.on('stream', (stream, headers, flags) => {
+            const method = headers[':method']
+            const path   = headers[':path']
+            // console.log('header =>', headers)
+            console.log('method =>', method)
+            console.log('path =>', path)
+            console.log('flags =>', flags)
             stream.respond({
                 'content-type': 'text-html',
                 ':status': 200
