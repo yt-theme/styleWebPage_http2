@@ -1,6 +1,7 @@
 const http2 = require('http2')
 const fs    = require('fs')
 
+const { Router } = require('./router/router')
 // 配置文件
 const { Server_port, Server_privateKey_src, Server_publicKey_src } = require('../../server_conf')
 
@@ -27,22 +28,12 @@ class Server {
         // this.http2_server.setTimeout(4400)
         // this.http2_server.on('timeout', (err) => { console.log('server on timeout =>', err) })
         this.http2_server.on('stream', (stream, headers, flags) => {
-            const method = headers[':method']
-            const path   = headers[':path']
-            // console.log('header =>', headers)
-            console.log('method =>', method)
-            console.log('path =>', path)
-            console.log('flags =>', flags)
-            stream.respond({
-                'content-type': 'text-html',
-                ':status': 200
-            })
-            stream.end('<h2>hello world</h2>')
+            new Router(stream, headers, flags).dispatch()
         })
         this.http2_server.listen(Server_port)
     }
 }
 
 module.exports = {
-    Server: Server
+    Server
 }
